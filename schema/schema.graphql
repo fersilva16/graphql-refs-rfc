@@ -1,7 +1,7 @@
-type Query {
-  me: User!
+type Company {
+  id: ID
+  name: String!
   users: [User!]!
-  companies: [Company!]!
 }
 
 type User {
@@ -10,8 +10,8 @@ type User {
   company: Company!
 }
 
-type Company {
-  id: ID
-  name: String!
+type Query {
+  me: User!
   users: [User!]!
+  companies: [Company!]!
 }

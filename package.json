@@ -17,7 +17,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "lint --fix",
-    "postinstall": "simple-git-hooks",
+    "postinstall": "simple-git-hooks && patch-package",
     "test": "jest",
     "schema": "tsx scripts/updateSchema",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit"
@@ -48,6 +48,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "nano-staged": "0.8.0",
     "nodemon": "^2.0.20",
+    "patch-package": "^6.5.1",
     "prettier": "2.8.2",
     "simple-git-hooks": "2.8.1",
     "tsx": "^3.12.2",
