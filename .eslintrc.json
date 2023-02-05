@@ -1,0 +1,66 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "prettier"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ],
+
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          ["builtin", "external"],
+          ["parent", "sibling", "index"]
+        ],
+
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+
+        "newlines-between": "always",
+
+        "pathGroupsExcludedImportTypes": []
+      }
+    ],
+
+    "no-console": "error"
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+
+    "import/resolver": {
+      "typescript": {
+        "project": "tsconfig.json"
+      }
+    },
+
+    "react": {
+      "version": "detect"
+    }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
+}

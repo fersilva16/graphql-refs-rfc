@@ -1,0 +1,66 @@
+{
+  "name": "graphql-refs-rfc",
+  "author": "Fernando Silva <fernandonsilva16@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fersilva16/graphql-refs-rfc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fersilva16/graphql-refs-rfc/issues"
+  },
+  "homepage": "https://github.com/fersilva16/graphql-refs-rfc#readme",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "dev:watch": "nodemon --exec 'pnpm dev' -w src -e .ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "lint --fix",
+    "postinstall": "simple-git-hooks",
+    "test": "jest",
+    "schema": "tsx scripts/updateSchema",
+    "type-check": "tsc --project tsconfig.json --pretty --noEmit"
+  },
+  "dependencies": {
+    "graphql": "^16.6.0",
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-graphql": "^0.12.0",
+    "koa-router": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.5",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "18.11.18",
+    "@types/node-cron": "^3.0.7",
+    "@typescript-eslint/eslint-plugin": "5.48.1",
+    "@typescript-eslint/parser": "5.48.1",
+    "esbuild": "0.16.17",
+    "eslint": "8.31.0",
+    "eslint-config-prettier": "8.6.0",
+    "eslint-import-resolver-node": "0.3.7",
+    "eslint-import-resolver-typescript": "3.5.3",
+    "eslint-plugin-import": "2.27.0",
+    "eslint-plugin-jsx-a11y": "6.7.0",
+    "eslint-plugin-react": "7.32.0",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "nano-staged": "0.8.0",
+    "nodemon": "^2.0.20",
+    "prettier": "2.8.2",
+    "simple-git-hooks": "2.8.1",
+    "tsx": "^3.12.2",
+    "typescript": "4.9.4"
+  },
+  "nano-staged": {
+    "*": "prettier --ignore-unknown --write",
+    "*.{ts,tsx}": [
+      "bash -c 'pnpm type-check'"
+    ],
+    "*.{js,ts,tsx}": "eslint --fix"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm nano-staged"
+  }
+}
