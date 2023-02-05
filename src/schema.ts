@@ -1,3 +1,7 @@
 import { GraphQLSchema } from 'graphql';
 
-export const schema = new GraphQLSchema({});
+import { QueryType } from './query/QueryType';
+
+export const schema = new GraphQLSchema({
+  query: QueryType,
+});
