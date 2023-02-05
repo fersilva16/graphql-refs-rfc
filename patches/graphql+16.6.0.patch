@@ -1,0 +1,160 @@
+diff --git a/node_modules/graphql/execution/execute.js b/node_modules/graphql/execution/execute.js
+index ec5ddcc..567f78f 100644
+--- a/node_modules/graphql/execution/execute.js
++++ b/node_modules/graphql/execution/execute.js
+@@ -641,6 +641,18 @@ function completeValue(exeContext, returnType, fieldNodes, info, path, result) {
+       result,
+     );
+   }
++
++  if ((0, _definition.isRefType)(returnType)) {
++    return completeRefValue(
++      exeContext,
++      returnType,
++      fieldNodes,
++      info,
++      path,
++      result,
++    );
++  }
++
+   /* c8 ignore next 6 */
+   // Not reachable, all possible output types have been considered.
+ 
+@@ -749,6 +761,33 @@ function completeLeafValue(returnType, result) {
+ 
+   return serializedResult;
+ }
++
++
++function completeRefValue(
++  exeContext,
++  returnType,
++  fieldNodes,
++  info,
++  path,
++  result,
++) {
++  const type = exeContext.schema.getType(returnType);
++  
++  if (type == null) {
++    throw new Error(
++      `"${returnType}" is not a valid type`,
++    );
++  }
++  
++  return completeObjectValue(
++    exeContext,
++    type,
++    fieldNodes,
++    info,
++    path,
++    result,
++  );
++}
+ /**
+  * Complete a value of an abstract type by determining the runtime object type
+  * of that value, then complete the value for that type.
+diff --git a/node_modules/graphql/type/definition.d.ts b/node_modules/graphql/type/definition.d.ts
+index 904a449..a32bbd7 100644
+--- a/node_modules/graphql/type/definition.d.ts
++++ b/node_modules/graphql/type/definition.d.ts
+@@ -43,7 +43,8 @@ export declare type GraphQLType =
+       | GraphQLEnumType
+       | GraphQLInputObjectType
+       | GraphQLList<GraphQLType>
+-    >;
++    >
++  | string;
+ export declare function isType(type: unknown): type is GraphQLType;
+ export declare function assertType(type: unknown): GraphQLType;
+ /**
+@@ -78,6 +79,9 @@ export declare function isListType(
+ export declare function isListType(
+   type: unknown,
+ ): type is GraphQLList<GraphQLType>;
++export declare function isRefType(
++  type: unknown,
++): type is string;
+ export declare function assertListType(type: unknown): GraphQLList<GraphQLType>;
+ export declare function isNonNullType(
+   type: GraphQLInputType,
+@@ -124,7 +128,8 @@ export declare type GraphQLOutputType =
+       | GraphQLUnionType
+       | GraphQLEnumType
+       | GraphQLList<GraphQLOutputType>
+-    >;
++    >
++  | string;
+ export declare function isOutputType(type: unknown): type is GraphQLOutputType;
+ export declare function assertOutputType(type: unknown): GraphQLOutputType;
+ /**
+@@ -230,7 +235,8 @@ export declare type GraphQLNullableType =
+   | GraphQLUnionType
+   | GraphQLEnumType
+   | GraphQLInputObjectType
+-  | GraphQLList<GraphQLType>;
++  | GraphQLList<GraphQLType>
++  | string;
+ export declare function isNullableType(
+   type: unknown,
+ ): type is GraphQLNullableType;
+diff --git a/node_modules/graphql/type/definition.js b/node_modules/graphql/type/definition.js
+index b27c083..0c37655 100644
+--- a/node_modules/graphql/type/definition.js
++++ b/node_modules/graphql/type/definition.js
+@@ -41,6 +41,7 @@ exports.isInputType = isInputType;
+ exports.isInterfaceType = isInterfaceType;
+ exports.isLeafType = isLeafType;
+ exports.isListType = isListType;
++exports.isRefType = isRefType;
+ exports.isNamedType = isNamedType;
+ exports.isNonNullType = isNonNullType;
+ exports.isNullableType = isNullableType;
+@@ -96,7 +97,8 @@ function isType(type) {
+     isEnumType(type) ||
+     isInputObjectType(type) ||
+     isListType(type) ||
+-    isNonNullType(type)
++    isNonNullType(type) ||
++    isRefType(type)
+   );
+ }
+ 
+@@ -259,7 +261,8 @@ function isOutputType(type) {
+     isInterfaceType(type) ||
+     isUnionType(type) ||
+     isEnumType(type) ||
+-    (isWrappingType(type) && isOutputType(type.ofType))
++    (isWrappingType(type) && isOutputType(type.ofType)) ||
++    isRefType(type)
+   );
+ }
+ 
+@@ -491,6 +494,11 @@ function getNamedType(type) {
+     return unwrappedType;
+   }
+ }
++
++function isRefType(type) {
++  return typeof type === 'string' 
++}
++
+ /**
+  * Used while defining GraphQL types to allow for circular references in
+  * otherwise immutable type definitions.
+diff --git a/node_modules/graphql/type/schema.js b/node_modules/graphql/type/schema.js
+index d340e68..0e97788 100644
+--- a/node_modules/graphql/type/schema.js
++++ b/node_modules/graphql/type/schema.js
+@@ -208,6 +208,10 @@ class GraphQLSchema {
+         continue;
+       }
+ 
++      if (typeof namedType === 'string') {
++        continue;
++      }
++
+       const typeName = namedType.name;
+       typeName ||
+         (0, _devAssert.devAssert)(

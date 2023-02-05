@@ -7,7 +7,6 @@ import {
 
 import type { User } from './User';
 import { companies } from '../company/__fixtures__/companies';
-import { CompanyType } from '../company/CompanyType';
 
 export const UserType = new GraphQLObjectType<User>({
   name: 'User',
@@ -21,7 +20,7 @@ export const UserType = new GraphQLObjectType<User>({
       resolve: (user) => user.name,
     },
     company: {
-      type: new GraphQLNonNull(CompanyType),
+      type: new GraphQLNonNull('Company'),
       resolve: (user) =>
         companies.find((company) => company.id === user.company),
     },
