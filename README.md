@@ -6,5 +6,5 @@ A try to avoid circular dependencies for types in `graphql-js` by adding the pos
 
 - [x] Setup a GraphQL server
 - [x] Add schema script
-- [ ] Add User and Company types
+- [x] Add User and Company types
 - [ ] Add GraphQL Refs
