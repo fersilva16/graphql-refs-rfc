@@ -75,6 +75,9 @@ export const schema = new GraphQLSchema({
 });
 ```
 
+> This changes in `graphql-js` can be seen in https://github.com/fersilva16/graphql-refs-rfc/blob/main/patches/graphql%2B16.6.0.patch
+> It later will become an pull request in the original repository
+
 # How to run
 
 1. Install dependencies:
